@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+
+$: << File.expand_path('../lib', File.dirname(__FILE__))
+
+require 'memmysql'
+
+# == Main ===================================================================
+
+op = OptionParser.new
+
+options = {
+ :size => 100,
+ :port => 13306
+}
+
+op.on("-s", "--size=s") { |size| options[:size] = size.to_i }
+op.on("-v", "--verbose") { options[:verbose] = true }
+
+args = op.parse(*ARGV)
+
+command, options[:name] = args
+
+options[:name] ||= 'memmysql'
+
+memmysql = MemMySQL::Server.new(options)
+
+case (command)
+when 'start'
+  memmysql.start!
+when 'stop'
+  memmysql.stop!
+when 'status'
+  memmysql.status
+end
